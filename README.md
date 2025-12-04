@@ -1,9 +1,10 @@
 ## Telegram Sender
-A web-based interface that integrates the Telegram Bot API, allowing users to send text messages and images directly to Telegram groups, channels, and topics.
+A web-based interface that integrates the Telegram Bot API, allowing users to send text messages, images, and GIFs directly to Telegram groups, channels, and topics.
 
 **Features:**
 - Send plain text messages to a Telegram chat (group/channel/topic)
 - Send images by URL or by uploading a file
+- Send GIFs by URL or by uploading a file
 - Optional topic/thread ID support for threaded messages
 - Minimal, client-side UI (Next.js + React)
 
@@ -40,7 +41,7 @@ npm run dev
 http://localhost:3000
 ```
 
-When the app loads, enter your **Bot Token** and **Chat ID** into the configuration panel and start sending messages or images.
+When the app loads, enter your **Bot Token** and **Chat ID** into the configuration panel and start sending messages, images, or GIFs.
  
 ## Build & Run (production) 
 1. Build the app:

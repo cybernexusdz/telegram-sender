@@ -7,6 +7,7 @@ import { MessageSquare } from "lucide-react"
 import { TelegramConfig } from "./components/TelegramConfig"
 import { MessageSender } from "./components/MessageSender"
 import { ImageSender } from "./components/ImageSender"
+import { GifSender } from "./components/GifSender"
 
 interface Status {
   type: "success" | "error"
@@ -62,6 +63,28 @@ export default function Home() {
     }
   }
 
+  const handleSendGifUrl = async (url: string, caption?: string) => {
+    const service = getTelegramService()
+    const result = await service.sendAnimationFromUrl(url, caption)
+
+    if (result.success) {
+      setStatus({ type: "success", message: result.message! })
+    } else {
+      setStatus({ type: "error", message: result.error! })
+    }
+  }
+
+  const handleSendGifFile = async (file: File, caption?: string) => {
+    const service = getTelegramService()
+    const result = await service.sendAnimationFromFile(file, caption)
+
+    if (result.success) {
+      setStatus({ type: "success", message: result.message! })
+    } else {
+      setStatus({ type: "error", message: result.error! })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-gray-100">
       {status && (
@@ -81,7 +104,7 @@ export default function Home() {
             </h1>
           </div>
           <p className="text-gray-600">
-            Send messages and images to Telegram channels and topics
+            Send messages, images, and GIFs to Telegram channels and topics
           </p>
         </header>
 
@@ -108,6 +131,12 @@ export default function Home() {
         <ImageSender
           onSendUrl={handleSendImageUrl}
           onSendFile={handleSendImageFile}
+          disabled={!isConfigValid}
+        />
+
+        <GifSender
+          onSendUrl={handleSendGifUrl}
+          onSendFile={handleSendGifFile}
           disabled={!isConfigValid}
         />
       </div>
