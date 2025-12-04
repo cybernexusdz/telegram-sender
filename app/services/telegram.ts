@@ -52,6 +52,53 @@ export class TelegramService {
     }
   }
 
+  async sendReply(
+    text: string,
+    messageId: string
+  ): Promise<MessageResponse> {
+    try {
+      const url = `${TELEGRAM_API_BASE}${this.config.botToken}/sendMessage`
+
+      const payload: Record<string, string> = {
+        chat_id: this.config.chatId,
+        text: text,
+        reply_to_message_id: messageId,
+      }
+
+      if (this.config.threadId) {
+        payload.message_thread_id = this.config.threadId
+      }
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.description || "Failed to send reply",
+        }
+      }
+
+      return {
+        success: true,
+        message: "Reply sent successfully",
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      }
+    }
+  }
+
   async sendPhotoFromUrl(
     photoUrl: string,
     caption?: string

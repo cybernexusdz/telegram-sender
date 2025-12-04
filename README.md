@@ -3,6 +3,7 @@ A web-based interface that integrates the Telegram Bot API, allowing users to se
 
 **Features:**
 - Send plain text messages to a Telegram chat (group/channel/topic)
+- Reply to specific messages using message IDs
 - Send images by URL or by uploading a file
 - Send GIFs by URL or by uploading a file
 - Optional topic/thread ID support for threaded messages

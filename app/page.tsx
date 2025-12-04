@@ -8,6 +8,7 @@ import { TelegramConfig } from "./components/TelegramConfig"
 import { MessageSender } from "./components/MessageSender"
 import { ImageSender } from "./components/ImageSender"
 import { GifSender } from "./components/GifSender"
+import { ReplySender } from "./components/ReplySender"
 
 interface Status {
   type: "success" | "error"
@@ -85,6 +86,17 @@ export default function Home() {
     }
   }
 
+  const handleSendReply = async (message: string, messageId: string) => {
+    const service = getTelegramService()
+    const result = await service.sendReply(message, messageId)
+
+    if (result.success) {
+      setStatus({ type: "success", message: result.message! })
+    } else {
+      setStatus({ type: "error", message: result.error! })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-gray-100">
       {status && (
@@ -127,6 +139,8 @@ export default function Home() {
         )}
 
         <MessageSender onSend={handleSendMessage} disabled={!isConfigValid} />
+
+        <ReplySender onSend={handleSendReply} disabled={!isConfigValid} />
 
         <ImageSender
           onSendUrl={handleSendImageUrl}
