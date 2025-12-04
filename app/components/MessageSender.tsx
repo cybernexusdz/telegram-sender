@@ -26,10 +26,12 @@ export function MessageSender({ onSend, disabled }: MessageSenderProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6"> 
+    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
       <div className="flex items-center gap-2 mb-4">
         <MessageSquarePlus className="w-5 h-5 text-blue-600" />
-        <h2 className="text-xl font-semibold text-gray-800">Send Text Message</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          Send Text Message
+        </h2>
       </div>
 
       <form onSubmit={handleSubmit}>
