@@ -4,8 +4,10 @@ A web-based interface that integrates the Telegram Bot API, allowing users to se
 **Features:**
 - Send plain text messages to a Telegram chat (group/channel/topic)
 - Reply to specific messages using message IDs
+- Add an emoji reaction to a message by message ID
 - Send images by URL or by uploading a file
 - Send GIFs by URL or by uploading a file
+- Send videos by URL or by uploading a file, with an optional caption
 - Optional topic/thread ID support for threaded messages
 - Minimal, client-side UI (Next.js + React)
 
@@ -42,9 +44,9 @@ npm run dev
 http://localhost:3000
 ```
 
-When the app loads, enter your **Bot Token** and **Chat ID** into the configuration panel and start sending messages, images, or GIFs. The bot token is saved in this browser's local storage and loaded automatically on future visits. Clearing the token field removes the saved token.
+When the app loads, enter your **Bot Token**, create a named destination with its **Chat ID**, and start sending messages, replies, reactions, images, GIFs, or videos. To react, choose **React**, enter the target message ID, and select an emoji. Media can be sent by URL or uploaded, with an optional caption. Saved destinations and the selected destination are restored from this browser's local storage. The optional Topic ID is set in the Compose section and saved with the selected destination. The bot token is also saved in local storage; clearing the token field removes it.
 
-**Security note:** The token is stored unencrypted in browser storage and is accessible to scripts running on this site. Avoid using this feature on shared or public devices.
+**Security note:** The token and destinations are stored unencrypted in browser storage and are accessible to scripts running on this site. Avoid using this feature on shared or public devices.
  
 ## Build & Run (production) 
 1. Build the app:
