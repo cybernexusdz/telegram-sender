@@ -9,13 +9,22 @@ import {
   Paperclip,
   Reply,
   Send,
+  SmilePlus,
   Upload,
   Video,
 } from "lucide-react"
 import { useState } from "react"
 
-type ComposerMode = "message" | "reply" | "photo" | "animation" | "video"
+type ComposerMode =
+  | "message"
+  | "reply"
+  | "reaction"
+  | "photo"
+  | "animation"
+  | "video"
 type MediaSource = "url" | "file"
+
+const reactionEmojis = ["👍", "❤️", "🔥", "🎉", "😂", "😢", "👏", "🤔"]
 
 interface MessageComposerProps {
   disabled: boolean
@@ -24,6 +33,7 @@ interface MessageComposerProps {
   onThreadIdChange: (value: string) => void
   onSendMessage: (message: string) => Promise<void>
   onSendReply: (message: string, messageId: string) => Promise<void>
+  onSetReaction: (messageId: string, emoji: string) => Promise<void>
   onSendPhotoUrl: (url: string, caption?: string) => Promise<void>
   onSendPhotoFile: (file: File, caption?: string) => Promise<void>
   onSendAnimationUrl: (url: string, caption?: string) => Promise<void>
@@ -35,6 +45,7 @@ interface MessageComposerProps {
 const modes: { id: ComposerMode; label: string; icon: typeof Send }[] = [
   { id: "message", label: "Message", icon: MessageSquareText },
   { id: "reply", label: "Reply", icon: Reply },
+  { id: "reaction", label: "React", icon: SmilePlus },
   { id: "photo", label: "Photo", icon: ImageIcon },
   { id: "animation", label: "GIF", icon: Film },
   { id: "video", label: "Video", icon: Video },
@@ -47,6 +58,7 @@ export function MessageComposer({
   onThreadIdChange,
   onSendMessage,
   onSendReply,
+  onSetReaction,
   onSendPhotoUrl,
   onSendPhotoFile,
   onSendAnimationUrl,
@@ -58,6 +70,8 @@ export function MessageComposer({
   const [mediaSource, setMediaSource] = useState<MediaSource>("url")
   const [message, setMessage] = useState("")
   const [messageId, setMessageId] = useState("")
+  const [reactionMessageId, setReactionMessageId] = useState("")
+  const [reactionEmoji, setReactionEmoji] = useState(reactionEmojis[0])
   const [mediaUrl, setMediaUrl] = useState("")
   const [mediaFile, setMediaFile] = useState<File | null>(null)
   const [caption, setCaption] = useState("")
@@ -67,6 +81,7 @@ export function MessageComposer({
   const isReady = (() => {
     if (mode === "message") return Boolean(message.trim())
     if (mode === "reply") return Boolean(message.trim() && messageId.trim())
+    if (mode === "reaction") return Boolean(reactionMessageId.trim())
     return mediaSource === "url" ? Boolean(mediaUrl.trim()) : Boolean(mediaFile)
   })()
 
@@ -88,6 +103,9 @@ export function MessageComposer({
         await onSendReply(message, messageId)
         setMessage("")
         setMessageId("")
+      } else if (mode === "reaction") {
+        await onSetReaction(reactionMessageId, reactionEmoji)
+        setReactionMessageId("")
       } else if (mode === "photo") {
         if (mediaSource === "url") {
           await onSendPhotoUrl(mediaUrl, caption || undefined)
@@ -128,6 +146,8 @@ export function MessageComposer({
       ? "Send message"
       : mode === "reply"
         ? "Send reply"
+        : mode === "reaction"
+          ? "Add reaction"
         : `Send ${mediaLabel}`
   const ModeIcon = modes.find((item) => item.id === mode)?.icon ?? Send
 
@@ -219,6 +239,45 @@ export function MessageComposer({
                 rows={5}
                 disabled={disabled || loading}
               />
+            </div>
+          </>
+        )}
+
+        {mode === "reaction" && (
+          <>
+            <div className="field-group">
+              <label htmlFor="reaction-message-id">Message ID</label>
+              <input
+                id="reaction-message-id"
+                type="number"
+                min="1"
+                step="1"
+                value={reactionMessageId}
+                onChange={(event) => setReactionMessageId(event.target.value)}
+                placeholder="Enter the message ID"
+                disabled={disabled || loading}
+              />
+              <p className="field-hint">
+                Add a reaction to a message in the selected chat.
+              </p>
+            </div>
+            <div className="field-group">
+              <span className="field-label">Choose a reaction</span>
+              <div className="reaction-picker" role="group" aria-label="Reaction">
+                {reactionEmojis.map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    aria-label={`React with ${emoji}`}
+                    aria-pressed={reactionEmoji === emoji}
+                    className={reactionEmoji === emoji ? "is-active" : ""}
+                    onClick={() => setReactionEmoji(emoji)}
+                    disabled={disabled || loading}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
             </div>
           </>
         )}

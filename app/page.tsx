@@ -228,6 +228,12 @@ export default function Home() {
     showResult(await getTelegramService().sendReply(message, messageId))
   }
 
+  const handleSetReaction = async (messageId: string, emoji: string) => {
+    showResult(
+      await getTelegramService().setMessageReaction(messageId, emoji),
+    )
+  }
+
   const handleSendPhotoUrl = async (url: string, caption?: string) => {
     showResult(await getTelegramService().sendPhotoFromUrl(url, caption))
   }
@@ -296,6 +302,7 @@ export default function Home() {
             onThreadIdChange={handleThreadIdChange}
             onSendMessage={handleSendMessage}
             onSendReply={handleSendReply}
+            onSetReaction={handleSetReaction}
             onSendPhotoUrl={handleSendPhotoUrl}
             onSendPhotoFile={handleSendPhotoFile}
             onSendAnimationUrl={handleSendAnimationUrl}

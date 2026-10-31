@@ -99,6 +99,59 @@ export class TelegramService {
     }
   }
 
+  async setMessageReaction(
+    messageId: string,
+    emoji: string
+  ): Promise<MessageResponse> {
+    const parsedMessageId = Number(messageId)
+    if (
+      !/^[1-9]\d*$/.test(messageId) ||
+      !Number.isSafeInteger(parsedMessageId)
+    ) {
+      return {
+        success: false,
+        error: "Enter a valid positive message ID.",
+      }
+    }
+
+    try {
+      const url = `${TELEGRAM_API_BASE}${this.config.botToken}/setMessageReaction`
+      const payload: Record<string, unknown> = {
+        chat_id: this.config.chatId,
+        message_id: parsedMessageId,
+        reaction: [{ type: "emoji", emoji }],
+      }
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.description || "Failed to add reaction",
+        }
+      }
+
+      return {
+        success: true,
+        message: "Reaction added successfully",
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      }
+    }
+  }
+
   async sendPhotoFromUrl(
     photoUrl: string,
     caption?: string
