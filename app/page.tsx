@@ -244,6 +244,14 @@ export default function Home() {
     showResult(await getTelegramService().sendAnimationFromFile(file, caption))
   }
 
+  const handleSendVideoUrl = async (url: string, caption?: string) => {
+    showResult(await getTelegramService().sendVideoFromUrl(url, caption))
+  }
+
+  const handleSendVideoFile = async (file: File, caption?: string) => {
+    showResult(await getTelegramService().sendVideoFromFile(file, caption))
+  }
+
   return (
     <main className="app-shell">
       {status && (
@@ -292,6 +300,8 @@ export default function Home() {
             onSendPhotoFile={handleSendPhotoFile}
             onSendAnimationUrl={handleSendAnimationUrl}
             onSendAnimationFile={handleSendAnimationFile}
+            onSendVideoUrl={handleSendVideoUrl}
+            onSendVideoFile={handleSendVideoFile}
           />
         </div>
 

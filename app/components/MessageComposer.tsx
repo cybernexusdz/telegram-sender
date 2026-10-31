@@ -10,10 +10,11 @@ import {
   Reply,
   Send,
   Upload,
+  Video,
 } from "lucide-react"
 import { useState } from "react"
 
-type ComposerMode = "message" | "reply" | "photo" | "animation"
+type ComposerMode = "message" | "reply" | "photo" | "animation" | "video"
 type MediaSource = "url" | "file"
 
 interface MessageComposerProps {
@@ -27,6 +28,8 @@ interface MessageComposerProps {
   onSendPhotoFile: (file: File, caption?: string) => Promise<void>
   onSendAnimationUrl: (url: string, caption?: string) => Promise<void>
   onSendAnimationFile: (file: File, caption?: string) => Promise<void>
+  onSendVideoUrl: (url: string, caption?: string) => Promise<void>
+  onSendVideoFile: (file: File, caption?: string) => Promise<void>
 }
 
 const modes: { id: ComposerMode; label: string; icon: typeof Send }[] = [
@@ -34,6 +37,7 @@ const modes: { id: ComposerMode; label: string; icon: typeof Send }[] = [
   { id: "reply", label: "Reply", icon: Reply },
   { id: "photo", label: "Photo", icon: ImageIcon },
   { id: "animation", label: "GIF", icon: Film },
+  { id: "video", label: "Video", icon: Video },
 ]
 
 export function MessageComposer({
@@ -47,6 +51,8 @@ export function MessageComposer({
   onSendPhotoFile,
   onSendAnimationUrl,
   onSendAnimationFile,
+  onSendVideoUrl,
+  onSendVideoFile,
 }: MessageComposerProps) {
   const [mode, setMode] = useState<ComposerMode>("message")
   const [mediaSource, setMediaSource] = useState<MediaSource>("url")
@@ -57,7 +63,7 @@ export function MessageComposer({
   const [caption, setCaption] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const isMedia = mode === "photo" || mode === "animation"
+  const isMedia = mode === "photo" || mode === "animation" || mode === "video"
   const isReady = (() => {
     if (mode === "message") return Boolean(message.trim())
     if (mode === "reply") return Boolean(message.trim() && messageId.trim())
@@ -100,13 +106,23 @@ export function MessageComposer({
           setMediaFile(null)
         }
         setCaption("")
+      } else if (mode === "video") {
+        if (mediaSource === "url") {
+          await onSendVideoUrl(mediaUrl, caption || undefined)
+          setMediaUrl("")
+        } else if (mediaFile) {
+          await onSendVideoFile(mediaFile, caption || undefined)
+          setMediaFile(null)
+        }
+        setCaption("")
       }
     } finally {
       setLoading(false)
     }
   }
 
-  const mediaLabel = mode === "photo" ? "image" : "GIF"
+  const mediaLabel =
+    mode === "photo" ? "image" : mode === "video" ? "video" : "GIF"
   const submitLabel =
     mode === "message"
       ? "Send message"
@@ -234,7 +250,13 @@ export function MessageComposer({
 
             {mediaSource === "url" ? (
               <div className="field-group" key="media-url">
-                <label htmlFor="media-url">{mode === "photo" ? "Image" : "GIF"} URL</label>
+                <label htmlFor="media-url">
+                  {mode === "photo"
+                    ? "Image URL"
+                    : mode === "video"
+                      ? "Video URL"
+                      : "GIF URL"}
+                </label>
                 <input
                   id="media-url"
                   type="url"
@@ -250,7 +272,13 @@ export function MessageComposer({
                 <input
                   id="media-file"
                   type="file"
-                  accept={mode === "photo" ? "image/*" : "image/gif,video/mp4"}
+                  accept={
+                    mode === "photo"
+                      ? "image/*"
+                      : mode === "video"
+                        ? "video/mp4"
+                        : "image/gif,video/mp4"
+                  }
                   onChange={(event) =>
                     setMediaFile(event.target.files?.[0] ?? null)
                   }

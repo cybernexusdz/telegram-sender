@@ -290,4 +290,100 @@ export class TelegramService {
       }
     }
   }
+
+  async sendVideoFromUrl(
+    videoUrl: string,
+    caption?: string
+  ): Promise<MessageResponse> {
+    try {
+      const url = `${TELEGRAM_API_BASE}${this.config.botToken}/sendVideo`
+
+      const payload: Record<string, string> = {
+        chat_id: this.config.chatId,
+        video: videoUrl,
+      }
+
+      if (caption) {
+        payload.caption = caption
+      }
+
+      if (this.config.threadId) {
+        payload.message_thread_id = this.config.threadId
+      }
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.description || "Failed to send video",
+        }
+      }
+
+      return {
+        success: true,
+        message: "Video sent successfully",
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      }
+    }
+  }
+
+  async sendVideoFromFile(
+    file: File,
+    caption?: string
+  ): Promise<MessageResponse> {
+    try {
+      const url = `${TELEGRAM_API_BASE}${this.config.botToken}/sendVideo`
+
+      const formData = new FormData()
+      formData.append("chat_id", this.config.chatId)
+      formData.append("video", file)
+
+      if (caption) {
+        formData.append("caption", caption)
+      }
+
+      if (this.config.threadId) {
+        formData.append("message_thread_id", this.config.threadId)
+      }
+
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.description || "Failed to send video",
+        }
+      }
+
+      return {
+        success: true,
+        message: "Video sent successfully",
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      }
+    }
+  }
 }
