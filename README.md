@@ -44,7 +44,7 @@ npm run dev
 http://localhost:3000
 ```
 
-When the app loads, enter your **Bot Token**, create a named destination with its **Chat ID**, and start sending messages, replies, reactions, images, GIFs, or videos. To react, choose **React**, enter the target message ID, and select an emoji. Media can be sent by URL or uploaded, with an optional caption. Saved destinations and the selected destination are restored from this browser's local storage. The optional Topic ID is set in the Compose section and saved with the selected destination. The bot token is also saved in local storage; clearing the token field removes it.
+When the app loads, enter your **Bot Token**, create a named destination with its **Chat ID**, and start sending messages, replies, reactions, images, GIFs, or videos. To react, choose **React**, enter the target message ID, and pick a quick reaction or type/paste an emoji. Telegram only accepts reactions enabled for the selected chat. Media can be sent by URL or uploaded, with an optional caption. Saved destinations and the selected destination are restored from this browser's local storage. The optional Topic ID is set in the Compose section and saved with the selected destination. The bot token is also saved in local storage; clearing the token field removes it.
 
 **Security note:** The token and destinations are stored unencrypted in browser storage and are accessible to scripts running on this site. Avoid using this feature on shared or public devices.
  

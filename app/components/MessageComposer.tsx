@@ -24,7 +24,7 @@ type ComposerMode =
   | "video"
 type MediaSource = "url" | "file"
 
-const reactionEmojis = ["👍", "❤️", "🔥", "🎉", "😂", "😢", "👏", "🤔"]
+const reactionEmojis = ["👍", "❤️", "🔥", "🎉", "🤣", "😢", "👏", "🤔","👀","🌚"]
 
 interface MessageComposerProps {
   disabled: boolean
@@ -72,12 +72,15 @@ export function MessageComposer({
   const [messageId, setMessageId] = useState("")
   const [reactionMessageId, setReactionMessageId] = useState("")
   const [reactionEmoji, setReactionEmoji] = useState(reactionEmojis[0])
+  const [customReactionEmoji, setCustomReactionEmoji] = useState("")
   const [mediaUrl, setMediaUrl] = useState("")
   const [mediaFile, setMediaFile] = useState<File | null>(null)
   const [caption, setCaption] = useState("")
   const [loading, setLoading] = useState(false)
 
   const isMedia = mode === "photo" || mode === "animation" || mode === "video"
+  const selectedReactionEmoji =
+    customReactionEmoji.trim() || reactionEmoji
   const isReady = (() => {
     if (mode === "message") return Boolean(message.trim())
     if (mode === "reply") return Boolean(message.trim() && messageId.trim())
@@ -104,7 +107,7 @@ export function MessageComposer({
         setMessage("")
         setMessageId("")
       } else if (mode === "reaction") {
-        await onSetReaction(reactionMessageId, reactionEmoji)
+        await onSetReaction(reactionMessageId, selectedReactionEmoji)
         setReactionMessageId("")
       } else if (mode === "photo") {
         if (mediaSource === "url") {
@@ -269,15 +272,39 @@ export function MessageComposer({
                     key={emoji}
                     type="button"
                     aria-label={`React with ${emoji}`}
-                    aria-pressed={reactionEmoji === emoji}
-                    className={reactionEmoji === emoji ? "is-active" : ""}
-                    onClick={() => setReactionEmoji(emoji)}
+                    aria-pressed={
+                      !customReactionEmoji.trim() && reactionEmoji === emoji
+                    }
+                    className={
+                      !customReactionEmoji.trim() && reactionEmoji === emoji
+                        ? "is-active"
+                        : ""
+                    }
+                    onClick={() => {
+                      setReactionEmoji(emoji)
+                      setCustomReactionEmoji("")
+                    }}
                     disabled={disabled || loading}
                   >
                     {emoji}
                   </button>
                 ))}
               </div>
+              <label htmlFor="custom-reaction">Or enter an emoji</label>
+              <input
+                id="custom-reaction"
+                className="reaction-custom-input"
+                type="text"
+                value={customReactionEmoji}
+                onChange={(event) => setCustomReactionEmoji(event.target.value)}
+                placeholder="Type or paste one emoji"
+                autoComplete="off"
+                disabled={disabled || loading}
+                aria-describedby="reaction-emoji-hint"
+              />
+              <p id="reaction-emoji-hint" className="field-hint">
+                Use an emoji allowed for reactions in this chat.
+              </p>
             </div>
           </>
         )}

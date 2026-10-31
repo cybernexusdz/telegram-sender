@@ -51,6 +51,12 @@
   opacity: 0.55;
 }
 
+.field-group input.reaction-custom-input {
+  max-width: 240px;
+  min-height: 40px;
+  font-size: 15px;
+}
+
 * {
   box-sizing: border-box;
 }

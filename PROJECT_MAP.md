@@ -42,7 +42,7 @@ README.md                     # Setup and user-facing usage instructions
 - [x] Configure bot token and chat ID; optionally specify a topic/thread ID.
 - [x] Send text messages.
 - [x] Reply to an existing message by message ID.
-- [x] Add an emoji reaction to a message by message ID.
+- [x] Add a built-in or manually entered emoji reaction to a message by message ID.
 - [x] Send photos from a URL or uploaded file, with an optional caption.
 - [x] Send animations from a URL or uploaded file, with an optional caption.
 - [x] Send videos from a URL or uploaded file, with an optional caption.
