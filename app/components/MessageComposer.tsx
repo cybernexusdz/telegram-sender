@@ -18,6 +18,9 @@ type MediaSource = "url" | "file"
 
 interface MessageComposerProps {
   disabled: boolean
+  threadId: string
+  canEditThreadId: boolean
+  onThreadIdChange: (value: string) => void
   onSendMessage: (message: string) => Promise<void>
   onSendReply: (message: string, messageId: string) => Promise<void>
   onSendPhotoUrl: (url: string, caption?: string) => Promise<void>
@@ -35,6 +38,9 @@ const modes: { id: ComposerMode; label: string; icon: typeof Send }[] = [
 
 export function MessageComposer({
   disabled,
+  threadId,
+  canEditThreadId,
+  onThreadIdChange,
   onSendMessage,
   onSendReply,
   onSendPhotoUrl,
@@ -141,6 +147,22 @@ export function MessageComposer({
         onSubmit={handleSubmit}
         className="composer-form"
       >
+        <div className="composer-context">
+          <label htmlFor="compose-thread-id">Topic ID</label>
+          <input
+            id="compose-thread-id"
+            inputMode="numeric"
+            value={threadId}
+            onChange={(event) => onThreadIdChange(event.target.value)}
+            placeholder="Optional"
+            disabled={!canEditThreadId || loading}
+            aria-describedby="topic-id-hint"
+          />
+          <p id="topic-id-hint" className="field-hint">
+            Optional · saved with this destination
+          </p>
+        </div>
+
         {mode === "message" && (
           <div className="field-group">
             <label htmlFor="compose-message">Message</label>

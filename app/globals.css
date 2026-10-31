@@ -222,10 +222,6 @@ summary:focus-visible {
   border-top: 1px solid var(--line);
 }
 
-.thread-field {
-  grid-column: 1 / -1;
-}
-
 .field-group {
   display: grid;
   gap: 8px;
@@ -247,6 +243,7 @@ summary:focus-visible {
 
 .field-group input:not([type="file"]),
 .field-group textarea,
+.field-group select,
 .token-input {
   width: 100%;
   min-height: 43px;
@@ -258,7 +255,8 @@ summary:focus-visible {
 }
 
 .field-group input:not([type="file"]),
-.field-group textarea {
+.field-group textarea,
+.field-group select {
   padding: 11px 12px;
 }
 
@@ -298,6 +296,73 @@ summary:focus-visible {
   min-height: 40px;
   border: 0;
   box-shadow: none;
+}
+
+.field-group select {
+  width: 100%;
+  min-width: 0;
+  appearance: none;
+  background-color: #fff;
+  color: var(--ink);
+}
+
+.destination-select-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.destination-select-row select {
+  flex: 1;
+}
+
+.icon-button.delete-destination {
+  border: 1px solid #e7ebf1;
+}
+
+.icon-button.delete-destination:hover:not(:disabled) {
+  background: #fff0ef;
+  color: #c64f4b;
+}
+
+.icon-button.delete-destination:disabled {
+  opacity: 0.45;
+}
+
+.destination-create {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  padding-top: 17px;
+  border-top: 1px solid var(--line);
+}
+
+.add-destination-button {
+  display: inline-flex;
+  min-height: 43px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid #d8e4fa;
+  border-radius: 9px;
+  background: #f2f6ff;
+  color: #326bd2;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.add-destination-button:hover:not(:disabled) {
+  border-color: #b7cdf6;
+  background: #e8f0ff;
+}
+
+.add-destination-button:disabled {
+  color: #9da9b8;
+  cursor: not-allowed;
 }
 
 .icon-button {
@@ -397,6 +462,56 @@ summary:focus-visible {
   display: grid;
   gap: 18px;
   padding-top: 21px;
+}
+
+.composer-context {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border: 1px solid #edf0f5;
+  border-radius: 9px;
+  background: #fafbfd;
+}
+
+.composer-context label {
+  color: #526179;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.composer-context input {
+  width: 120px;
+  min-height: 25px;
+  padding: 4px 8px;
+  border: 1px solid #e1e6ee;
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.composer-context input::placeholder {
+  color: #a4afbf;
+}
+
+.composer-context input:focus {
+  border-color: #83aaf9;
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(56 120 246 / 10%);
+}
+
+.composer-context input:disabled {
+  background: #f7f8fa;
+  color: #97a1b0;
+}
+
+.composer-context .field-hint {
+  margin-left: auto;
+  font-size: 10px;
+  text-align: right;
 }
 
 .source-switch {
@@ -648,8 +763,12 @@ summary:focus-visible {
     padding: 16px;
   }
 
-  .thread-field {
-    grid-column: auto;
+  .destination-create {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .add-destination-button {
+    grid-column: 1 / -1;
   }
 
   .composer-card {
@@ -692,6 +811,18 @@ summary:focus-visible {
   .composer-form {
     gap: 15px;
     padding-top: 17px;
+  }
+
+  .composer-context {
+    gap: 7px;
+  }
+
+  .composer-context input {
+    width: 94px;
+  }
+
+  .composer-context .field-hint {
+    max-width: 135px;
   }
 
   .composer-footer {
