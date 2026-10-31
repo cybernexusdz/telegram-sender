@@ -42,7 +42,9 @@ npm run dev
 http://localhost:3000
 ```
 
-When the app loads, enter your **Bot Token** and **Chat ID** into the configuration panel and start sending messages, images, or GIFs.
+When the app loads, enter your **Bot Token** and **Chat ID** into the configuration panel and start sending messages, images, or GIFs. The bot token is saved in this browser's local storage and loaded automatically on future visits. Clearing the token field removes the saved token.
+
+**Security note:** The token is stored unencrypted in browser storage and is accessible to scripts running on this site. Avoid using this feature on shared or public devices.
  
 ## Build & Run (production) 
 1. Build the app:

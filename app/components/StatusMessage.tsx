@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircle, XCircle } from "lucide-react"
+import { CheckCircle2, X, XCircle } from "lucide-react"
 import { useEffect } from "react"
 
 interface StatusMessageProps {
@@ -17,35 +17,23 @@ export function StatusMessage({ type, message, onClose }: StatusMessageProps) {
 
   return (
     <div
-      className={`fixed top-4 right-4 max-w-md w-full rounded-lg shadow-lg p-4 flex items-start gap-3 ${
-        type === "success"
-          ? "bg-green-50 border border-green-200"
-          : "bg-red-50 border border-red-200"
-      }`}
+      className={`status-message ${type === "success" ? "is-success" : "is-error"}`}
+      role={type === "error" ? "alert" : "status"}
+      aria-live={type === "error" ? "assertive" : "polite"}
     >
       {type === "success" ? (
-        <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+        <CheckCircle2 aria-hidden="true" size={19} />
       ) : (
-        <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+        <XCircle aria-hidden="true" size={19} />
       )}
-      <div className="flex-1">
-        <p
-          className={`text-sm font-medium ${
-            type === "success" ? "text-green-800" : "text-red-800"
-          }`}
-        >
-          {message}
-        </p>
-      </div>
+      <p>{message}</p>
       <button
+        type="button"
         onClick={onClose}
-        className={`text-sm font-medium ${
-          type === "success"
-            ? "text-green-600 hover:text-green-800"
-            : "text-red-600 hover:text-red-800"
-        }`}
+        className="status-close"
+        aria-label="Dismiss notification"
       >
-        ×
+        <X aria-hidden="true" size={17} />
       </button>
     </div>
   )

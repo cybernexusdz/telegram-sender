@@ -1,14 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { MessageCircle, Send } from "lucide-react"
+import { MessageComposer } from "./components/MessageComposer"
 import { StatusMessage } from "./components/StatusMessage"
-import { TelegramService } from "./services/telegram"
-import { MessageSquare } from "lucide-react"
 import { TelegramConfig } from "./components/TelegramConfig"
-import { MessageSender } from "./components/MessageSender"
-import { ImageSender } from "./components/ImageSender"
-import { GifSender } from "./components/GifSender"
-import { ReplySender } from "./components/ReplySender"
+import { TelegramService } from "./services/telegram"
 
 interface Status {
   type: "success" | "error"
@@ -64,82 +61,47 @@ export default function Home() {
 
   const isConfigValid = botToken.trim() !== "" && chatId.trim() !== ""
 
-  const getTelegramService = () => {
-    return new TelegramService({
+  const getTelegramService = () =>
+    new TelegramService({
       botToken,
       chatId,
       threadId: threadId.trim() || undefined,
     })
+
+  const showResult = (result: Awaited<ReturnType<TelegramService["sendTextMessage"]>>) => {
+    if (result.success) {
+      setStatus({ type: "success", message: result.message! })
+    } else {
+      setStatus({ type: "error", message: result.error! })
+    }
   }
 
   const handleSendMessage = async (message: string) => {
-    const service = getTelegramService()
-    const result = await service.sendTextMessage(message)
-
-    if (result.success) {
-      setStatus({ type: "success", message: result.message! })
-    } else {
-      setStatus({ type: "error", message: result.error! })
-    }
-  }
-
-  const handleSendImageUrl = async (url: string, caption?: string) => {
-    const service = getTelegramService()
-    const result = await service.sendPhotoFromUrl(url, caption)
-
-    if (result.success) {
-      setStatus({ type: "success", message: result.message! })
-    } else {
-      setStatus({ type: "error", message: result.error! })
-    }
-  }
-
-  const handleSendImageFile = async (file: File, caption?: string) => {
-    const service = getTelegramService()
-    const result = await service.sendPhotoFromFile(file, caption)
-
-    if (result.success) {
-      setStatus({ type: "success", message: result.message! })
-    } else {
-      setStatus({ type: "error", message: result.error! })
-    }
-  }
-
-  const handleSendGifUrl = async (url: string, caption?: string) => {
-    const service = getTelegramService()
-    const result = await service.sendAnimationFromUrl(url, caption)
-
-    if (result.success) {
-      setStatus({ type: "success", message: result.message! })
-    } else {
-      setStatus({ type: "error", message: result.error! })
-    }
-  }
-
-  const handleSendGifFile = async (file: File, caption?: string) => {
-    const service = getTelegramService()
-    const result = await service.sendAnimationFromFile(file, caption)
-
-    if (result.success) {
-      setStatus({ type: "success", message: result.message! })
-    } else {
-      setStatus({ type: "error", message: result.error! })
-    }
+    showResult(await getTelegramService().sendTextMessage(message))
   }
 
   const handleSendReply = async (message: string, messageId: string) => {
-    const service = getTelegramService()
-    const result = await service.sendReply(message, messageId)
+    showResult(await getTelegramService().sendReply(message, messageId))
+  }
 
-    if (result.success) {
-      setStatus({ type: "success", message: result.message! })
-    } else {
-      setStatus({ type: "error", message: result.error! })
-    }
+  const handleSendPhotoUrl = async (url: string, caption?: string) => {
+    showResult(await getTelegramService().sendPhotoFromUrl(url, caption))
+  }
+
+  const handleSendPhotoFile = async (file: File, caption?: string) => {
+    showResult(await getTelegramService().sendPhotoFromFile(file, caption))
+  }
+
+  const handleSendAnimationUrl = async (url: string, caption?: string) => {
+    showResult(await getTelegramService().sendAnimationFromUrl(url, caption))
+  }
+
+  const handleSendAnimationFile = async (file: File, caption?: string) => {
+    showResult(await getTelegramService().sendAnimationFromFile(file, caption))
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-gray-100">
+    <main className="app-shell">
       {status && (
         <StatusMessage
           type={status.type}
@@ -148,53 +110,51 @@ export default function Home() {
         />
       )}
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <header className="mb-8 text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <MessageSquare className="w-10 h-10 text-blue-600" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              Telegram Sender
-            </h1>
+      <div className="app-content">
+        <header className="app-header">
+          <div className="brand-mark" aria-hidden="true">
+            <Send size={20} />
           </div>
-          <p className="text-gray-600">
-            Send messages, images, and GIFs to Telegram channels and topics
-          </p>
+          <div className="brand-copy">
+            <p className="eyebrow">A SIMPLE TELEGRAM TOOL</p>
+            <h1>Message delivery, made easy.</h1>
+            <p>Send a message, reply, photo, or GIF to any Telegram chat.</p>
+          </div>
+          <div className="header-decoration" aria-hidden="true">
+            <MessageCircle size={76} strokeWidth={1} />
+          </div>
         </header>
 
-        <TelegramConfig
-          botToken={botToken}
-          chatId={chatId}
-          threadId={threadId}
-          onBotTokenChange={setBotToken}
-          onChatIdChange={setChatId}
-          onThreadIdChange={setThreadId}
-        />
+        <div className="workspace">
+          <TelegramConfig
+            botToken={botToken}
+            chatId={chatId}
+            threadId={threadId}
+            isConfigured={isConfigValid}
+            onBotTokenChange={setBotToken}
+            onChatIdChange={setChatId}
+            onThreadIdChange={setThreadId}
+          />
 
-        {!isConfigValid && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-yellow-800">
-              Please configure your Bot Token and Chat ID to start sending
-              messages.
-            </p>
-          </div>
-        )}
+          <MessageComposer
+            disabled={!isConfigValid}
+            onSendMessage={handleSendMessage}
+            onSendReply={handleSendReply}
+            onSendPhotoUrl={handleSendPhotoUrl}
+            onSendPhotoFile={handleSendPhotoFile}
+            onSendAnimationUrl={handleSendAnimationUrl}
+            onSendAnimationFile={handleSendAnimationFile}
+          />
+        </div>
 
-        <MessageSender onSend={handleSendMessage} disabled={!isConfigValid} />
-
-        <ReplySender onSend={handleSendReply} disabled={!isConfigValid} />
-
-        <ImageSender
-          onSendUrl={handleSendImageUrl}
-          onSendFile={handleSendImageFile}
-          disabled={!isConfigValid}
-        />
-
-        <GifSender
-          onSendUrl={handleSendGifUrl}
-          onSendFile={handleSendGifFile}
-          disabled={!isConfigValid}
-        />
+        <footer className="app-footer">
+          <span>Made for quick, reliable Telegram sends.</span>
+          <span className="footer-status">
+            <span className={`status-dot${isConfigValid ? " is-ready" : ""}`} />
+            {isConfigValid ? "Ready to send" : "Configuration needed"}
+          </span>
+        </footer>
       </div>
-    </div>
+    </main>
   )
 }
