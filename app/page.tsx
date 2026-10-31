@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { StatusMessage } from "./components/StatusMessage"
 import { TelegramService } from "./services/telegram"
 import { MessageSquare } from "lucide-react"
@@ -15,11 +15,52 @@ interface Status {
   message: string
 }
 
+const BOT_TOKEN_STORAGE_KEY = "telegram-sender-bot-token"
+
 export default function Home() {
   const [botToken, setBotToken] = useState("")
+  const [isBotTokenLoaded, setIsBotTokenLoaded] = useState(false)
   const [chatId, setChatId] = useState("")
   const [threadId, setThreadId] = useState("")
   const [status, setStatus] = useState<Status | null>(null)
+
+  useEffect(() => {
+    try {
+      const savedBotToken = window.localStorage.getItem(BOT_TOKEN_STORAGE_KEY)
+      if (savedBotToken) {
+        setBotToken(savedBotToken)
+      }
+      setIsBotTokenLoaded(true)
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? `Unable to load the saved bot token: ${error.message}`
+            : "Unable to load the saved bot token from browser storage.",
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isBotTokenLoaded) return
+
+    try {
+      if (botToken) {
+        window.localStorage.setItem(BOT_TOKEN_STORAGE_KEY, botToken)
+      } else {
+        window.localStorage.removeItem(BOT_TOKEN_STORAGE_KEY)
+      }
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? `Unable to save the bot token: ${error.message}`
+            : "Unable to save the bot token to browser storage.",
+      })
+    }
+  }, [botToken, isBotTokenLoaded])
 
   const isConfigValid = botToken.trim() !== "" && chatId.trim() !== ""
 
